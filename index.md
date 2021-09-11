@@ -57,4 +57,40 @@ $(".share .weixin-share").click(function(){
 			alert("获取分享服务列表失败： "+JSON.stringify(e));
 		});
 	});
+	
+// 分享图片
+
+    $(".share .weixin-share").click(function () {
+
+        var imgsrc = $(".swiper-slide-active .drawImg").find('img').attr('src');
+        var b = new plus.nativeObj.Bitmap('poster');
+        b.loadBase64Data(imgsrc,function(){
+            console.log("创建成功");
+        },function(){
+            console.log("创建失败");
+        });
+
+        b.save('_www/poster.png',{overwrite:true},function(){
+            // 获取分享服务
+            plus.share.getServices(function(s){
+                var sweixin = s[0];
+                sweixin.send( {
+                    type: 'image',
+                    pictures:["_www/poster.png"],
+                    extra:{scene:"WXSceneSession"}}, function(){
+                    alert("分享成功！");
+                }, function(e){
+                    alert("分享失败："+e.message);
+                });
+
+            }, function(e){
+                alert("获取分享服务列表失败： "+JSON.stringify(e));
+            });
+        },function(){
+            console.log("保存失败");
+        });
+
+
+    });
+
 ```
